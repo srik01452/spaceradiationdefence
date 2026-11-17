@@ -1,0 +1,1550 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ASTRIS-Bio | Autonomous Flight Surgeon, Clinical Recovery & Astronaut Health App</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400;500;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="theme-space alert-nominal">
+
+  <!-- NASA SPACE APPS CHALLENGE 2026 TOP INNOVATION STRIP -->
+  <div class="space-apps-strip">
+    <div class="sas-content">
+      <div class="sas-badge">
+        <span class="sas-dot"></span>
+        <span class="sas-title">NASA SPACE APPS CHALLENGE 2026</span>
+      </div>
+      <div class="sas-text font-mono">
+        AUTONOMOUS CHIEF MEDICAL OFFICER & RECOVERY CLINIC | Real-time EHR, Clinical Rounds & Biofeedback
+      </div>
+      <div class="sas-actions">
+        <button id="btn-top-handsfree-triage" class="btn btn-sm btn-critical-pulse" onclick="triggerCriticalEmergencyHandsFree()" title="Incapacitated Scientist Hands-Free Triage">&#128680; HANDS-FREE CRITICAL TRIAGE</button>
+        <button id="btn-strip-launch" class="btn btn-sm btn-launch-orange" onclick="triggerOrbitalLaunchSequence()">&#128640; LAUNCH ORBITAL CONSOLE</button>
+        <button id="btn-open-doctor-consult" class="btn btn-sm btn-doctor-pulse" onclick="switchTab('tab-recovery')">&#128104;&#8205;&#9877;&#65039; Consult Flight Surgeon Now</button>
+        <a href="astrohealth-monitor.zip" download="astrohealth-monitor.zip" class="btn btn-sm btn-outline" style="color:#00f0ff;border-color:#00f0ff;text-decoration:none;" title="Download complete website ZIP package">&#128230; Download ZIP</a>
+        <a href="astris-bio-singlefile.html" download="astris-bio-singlefile.html" class="btn btn-sm btn-outline" style="color:#00e676;border-color:#00e676;text-decoration:none;" title="Download offline standalone file">&#128229; Download Single File</a>
+        <button id="btn-open-spaceapps" class="btn btn-sm btn-spaceapps" onclick="switchTab('tab-resources')">Challenge Architecture</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- EMERGENCY ALARM OVERLAY BANNER -->
+  <div id="emergency-banner" class="emergency-banner hidden">
+    <div class="banner-content">
+      <div class="banner-icon-pulse">
+        <svg viewBox="0 0 24 24" class="icon-alarm"><path fill="currentColor" d="M12 2L1 21h22L12 2zm0 3.99L19.53 19H4.47L12 5.99zM11 10h2v4h-2zm0 6h2v2h-2z"/></svg>
+      </div>
+      <div class="banner-text">
+        <div class="banner-title" id="emergency-title">CRITICAL EMERGENCY IN PROGRESS</div>
+        <div class="banner-desc" id="emergency-desc">Lethal radiation flux or acute physiological failure detected. Immediate autonomous countermeasure execution required.</div>
+        <div class="banner-handsfree-note font-mono" id="banner-handsfree-note">&#128483;&#65039; HANDS-FREE AUDIO DIRECTIVES BROADCASTING · SCIENTIST CANNOT TOUCH TABS</div>
+      </div>
+      <div class="banner-actions">
+        <button id="btn-banner-doctor-voice" class="btn btn-emergency-action" onclick="switchTab('tab-recovery'); repeatActiveDoctorPrecautions();">&#128266; Hear Doctor Precautions</button>
+        <button id="btn-banner-guidance" class="btn btn-secondary" onclick="switchTab('tab-guidance')">Open Emergency Guidance Protocol</button>
+        <button id="btn-banner-abort" class="btn btn-abort-action" onclick="switchTab('tab-trajectory')">Execute Immediate Emergency Landing</button>
+        <button id="btn-silence-alarm" class="btn btn-secondary">Silence Audio</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ORBITAL LAUNCH SEQUENCE HUD OVERLAY -->
+  <div id="orbital-launch-overlay" class="orbital-launch-overlay hidden">
+    <div class="olo-backdrop"></div>
+    <div class="olo-card">
+      <div class="olo-header">
+        <div class="olo-badge">
+          <span class="olo-dot"></span>
+          <span>NASA MISSION CONTROL · HOUSTON MCC-H</span>
+        </div>
+        <span class="font-mono highlight-cyan" id="olo-countdown">T - 00:00:03</span>
+      </div>
+      <div class="olo-body">
+        <div class="olo-telemetry-grid">
+          <div class="olo-metric">
+            <span class="olo-lbl">MISSION CRAFT</span>
+            <span class="olo-val font-mono highlight-green">ASTRIS-BIO (SC-01)</span>
+          </div>
+          <div class="olo-metric">
+            <span class="olo-lbl">ORBIT INCLINATION</span>
+            <span class="olo-val font-mono highlight-cyan">51.64° (ISS/Mars Orbit)</span>
+          </div>
+          <div class="olo-metric">
+            <span class="olo-lbl">ORBITAL VELOCITY</span>
+            <span class="olo-val font-mono highlight-yellow" id="olo-velocity">7.66 km/s (27,576 km/h)</span>
+          </div>
+          <div class="olo-metric">
+            <span class="olo-lbl">APOGEE / PERIGEE</span>
+            <span class="olo-val font-mono" id="olo-altitude">422 km / 414 km</span>
+          </div>
+        </div>
+        <div class="olo-status-stream" id="olo-status-stream">
+          <div class="olo-stream-line">[T-05s] DSN Madrid 70m dish telemetry acquisition verified.</div>
+          <div class="olo-stream-line">[T-03s] Bio-sensor wireless BT-LE mesh: 4/4 Astronauts online (1000 Hz).</div>
+          <div class="olo-stream-line">[T-01s] Dr. ASTRIS Autonomous Flight Surgeon AI active.</div>
+          <div class="olo-stream-line highlight-green">[T-00s] ORBITAL INSERTION CONFIRMED. MICROGRAVITY FLOAT ESTABLISHED.</div>
+        </div>
+        <div class="olo-progress-bar">
+          <div class="olo-progress-fill" id="olo-progress-fill" style="width: 100%;"></div>
+        </div>
+      </div>
+      <div class="olo-footer">
+        <button id="btn-engage-dashboard" class="btn btn-primary btn-lg" style="width:100%; justify-content:center; padding:10px;">
+          &#128640; ENGAGE ORBITAL HEALTH DASHBOARD
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOP HEADER / HUD NAVIGATION -->
+  <header class="hud-header">
+    <div class="header-left">
+      <div class="brand-badge">
+        <div class="brand-insignia" style="width:48px;height:48px;filter:drop-shadow(0 0 8px rgba(0,100,255,0.7));">
+          <svg viewBox="0 0 60 60" class="insignia-svg" width="48" height="48">
+            <defs>
+              <radialGradient id="nasaMeatballBlue" cx="40%" cy="35%" r="60%">
+                <stop offset="0%" stop-color="#1b5fc9"/>
+                <stop offset="100%" stop-color="#0b2466"/>
+              </radialGradient>
+            </defs>
+            <circle cx="30" cy="30" r="28" fill="url(#nasaMeatballBlue)" stroke="rgba(255,255,255,0.85)" stroke-width="1.2"/>
+            <circle cx="10" cy="14" r="1.1" fill="#ffffff"/>
+            <circle cx="19" cy="9" r="0.9" fill="#ffffff"/>
+            <circle cx="41" cy="11" r="1.1" fill="#ffffff"/>
+            <circle cx="51" cy="17" r="0.8" fill="#ffffff"/>
+            <circle cx="13" cy="24" r="0.8" fill="#ffffff"/>
+            <circle cx="47" cy="23" r="0.9" fill="#ffffff"/>
+            <circle cx="52" cy="35" r="0.8" fill="#ffffff"/>
+            <circle cx="8" cy="37" r="0.9" fill="#ffffff"/>
+            <circle cx="21" cy="48" r="0.8" fill="#ffffff"/>
+            <circle cx="39" cy="49" r="1.0" fill="#ffffff"/>
+            <path d="M6 31 Q30 8 54 27" fill="none" stroke="#e03a3e" stroke-width="3.2" stroke-linecap="round"/>
+            <ellipse cx="30" cy="31" rx="27" ry="9" fill="none" stroke="#ffffff" stroke-width="1.4" transform="rotate(-18 30 31)" opacity="0.85"/>
+            <text x="30" y="34.5" font-family="'Arial Black', Arial, sans-serif" font-size="10.5" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="1.2">NASA</text>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <div class="brand-title">ASTRIS-BIO <span class="version-tag">CLINICAL CLINIC v5.0</span></div>
+          <div class="brand-sub">AUTONOMOUS FLIGHT SURGEON, MEDICAL RECOVERY & REAL ASTRONAUT EHR</div>
+        </div>
+      </div>
+
+      <!-- DISTANCE FROM EARTH & TELEMETRY PILL -->
+      <div class="mission-status-pill">
+        <div class="mission-indicator blink-indicator"></div>
+        <div class="mission-info">
+          <span class="label">DISTANCE FROM EARTH:</span>
+          <span id="hud-earth-dist" class="val font-mono highlight-cyan">56,420,800 km (0.377 AU)</span>
+        </div>
+        <div class="mission-divider"></div>
+        <div class="mission-info">
+          <span class="label">1-WAY COMM DELAY:</span>
+          <span id="hud-comm-delay" class="val font-mono highlight-yellow">03m 08s</span>
+        </div>
+        <div class="mission-divider"></div>
+        <div class="mission-info">
+          <span class="label">MET:</span>
+          <span id="hud-met" class="val font-mono">042d 18h 44m 12s</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <!-- Trajectory Phase Selector -->
+      <div class="phase-selector-pill">
+        <label for="mission-phase-select" class="phase-label">TRAJECTORY:</label>
+        <select id="mission-phase-select" class="phase-select">
+          <option value="leo">LEO (Space Station - 408 km)</option>
+          <option value="moon">Cislunar / Artemis Gateway (384,400 km)</option>
+          <option value="mars_transit" selected>Mars Transit Deep Space (56.4M km / 0.38 AU)</option>
+          <option value="mars_orbit">Mars Arrival Orbit (225M km / 1.50 AU)</option>
+        </select>
+      </div>
+
+      <div class="audio-toggle-wrapper">
+        <button id="btn-toggle-sound" class="btn btn-hud-tool active" title="Toggle Synthesized Telemetry & Warning Audio">
+          <svg class="hud-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+          <span id="sound-status-text">AUDIO ON</span>
+        </button>
+      </div>
+
+      <!-- OVERALL ALERT TRIAGE MATRIX -->
+      <!-- ONE-CLICK SHARE FOR ALL TEAM MEMBERS -->
+      <!-- BRIGHT ORANGE ORBITAL LAUNCH BUTTON -->
+      <div class="launch-toggle-wrapper">
+        <button id="btn-trigger-launch" class="btn btn-launch-orange" onclick="triggerOrbitalLaunchSequence()" title="Launch Orbital Health Monitoring Console">
+          <svg class="hud-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2.5s4 4 4 10.5c0 1.5-.5 3-1 4l2 3.5h-3l-2-2-2 2H7l2-3.5c-.5-1-1-2.5-1-4C8 6.5 12 2.5 12 2.5zm0 4c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+          <span id="launch-btn-text">&#128640; LAUNCH ORBITAL CONSOLE</span>
+        </button>
+      </div>
+
+      <!-- ONE-CLICK SHARE FOR ALL TEAM MEMBERS -->
+      <div class="share-toggle-wrapper">
+        <button id="btn-share-app" class="btn btn-hud-tool btn-share-pulse" title="Share Web App Link with All Team Members">
+          <svg class="hud-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>
+          <span id="share-btn-text">SHARE WITH TEAM</span>
+        </button>
+      </div>
+
+      <!-- DIRECT DOWNLOAD BUTTON -->
+      <div class="download-toggle-wrapper">
+        <a href="astrohealth-monitor.zip" download="astrohealth-monitor.zip" class="btn btn-hud-tool" style="color:#00e676;border-color:rgba(0,230,118,0.4);text-decoration:none;" title="Download complete website ZIP for offline use">
+          <svg class="hud-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/></svg>
+          <span>DOWNLOAD ZIP</span>
+        </a>
+      </div>
+      <div class="triage-status-card" id="global-triage-badge">
+        <div class="triage-dot"></div>
+        <div class="triage-meta">
+          <div class="triage-label">SYSTEM TRIAGE</div>
+          <div class="triage-level" id="global-triage-text">NOMINAL</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- CREW ROSTER & ASTRONAUT PROFILE SWITCHER -->
+  <section class="crew-roster-bar">
+    <div class="roster-title">
+      <svg class="roster-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+      <span>CREW TELEMETRY STREAMS</span>
+    </div>
+
+    <div class="roster-cards-container" id="roster-container">
+      <!-- Populated via JS for 6 scientists: Srikanth, Sersan, Surya, Siva, Vishal, Sabari -->
+    </div>
+
+    <!-- QUICK SIMULATION TRIGGERS -->
+    <div class="sim-control-box">
+      <span class="sim-label">CRISIS SIMULATOR:</span>
+      <select id="sim-scenario-select" class="sim-select">
+        <option value="nominal">-- Select Space Crisis Scenario --</option>
+        <option value="spe_solar_flare">&#9889; Catastrophic SPE Radiation Surge (>100 mSv/h) - Immediate Land/Shelter</option>
+        <option value="bone_crush_gload">&#129460; High-G Re-entry (8.2G) - Severe Bone Crushing & Spinal Fracture</option>
+        <option value="isolation_psychosis">&#127756; Deep Space Isolation, Confinement & Earth-Out-Of-View Crisis</option>
+        <option value="hypoxia_event">&#129701; Cabin Depressurization / Rapid Hypoxia</option>
+        <option value="sans_hypertension">&#128065;&#65039; Acute SANS &amp; Intracranial Pressure (ICP) Spike</option>
+        <option value="cardio_arrhythmia">&#10084;&#65039; Ventricular Tachycardia &amp; Syncope</option>
+      </select>
+      <button id="btn-trigger-sim" class="btn btn-warning-action">Simulate</button>
+      <button id="btn-reset-nominal" class="btn btn-outline">Reset Nominal</button>
+    </div>
+  </section>
+
+  <!-- PRIMARY NAVIGATION TABS -->
+  <nav class="primary-tabs" id="primary-tabs-nav">
+    <button class="nav-tab active" data-tab="tab-recovery" onclick="switchTab('tab-recovery')">
+      <svg class="tab-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+      <span>&#127973; 1. Master Health &amp; Recovery Dashboard</span>
+      <span class="tab-badge highlight-green" id="badge-recovery">DOCTOR ACTIVE</span>
+    </button>
+    <button class="nav-tab" data-tab="tab-physiology" onclick="switchTab('tab-physiology')">
+      <svg class="tab-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+      <span>2. Physiology & Bone Fracture (G-Load)</span>
+      <span class="tab-badge" id="badge-physio">NOMINAL</span>
+    </button>
+    <button class="nav-tab" data-tab="tab-behavioral" onclick="switchTab('tab-behavioral')">
+      <svg class="tab-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L4.35 19.4c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l1.9-1.9C9.22 19.57 10.57 20 12 20c4.97 0 9-4.03 9-9s-4.03-9-9-9zm0 15c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6z"/></svg>
+      <span>3. Behavioral, Confinement & Isolation</span>
+      <span class="tab-badge" id="badge-behavioral">OPTIMAL</span>
+    </button>
+    <button class="nav-tab" data-tab="tab-radiation" onclick="switchTab('tab-radiation')">
+      <svg class="tab-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2c5.52 0 10 4.48 10 10s-4.48 10-10 10S2 17.52 2 12 6.48 2 12 2zm1 14h-2v2h2v-2zm-1-10c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z"/></svg>
+      <span>4. Radiation Tissue Penetration & Overdose</span>
+      <span class="tab-badge" id="badge-radiation">BACKGROUND</span>
+    </button>
+    <button class="nav-tab" data-tab="tab-trajectory" onclick="switchTab('tab-trajectory')">
+      <svg class="tab-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/></svg>
+      <span>5. Distance from Earth & Emergency Abort</span>
+      <span class="tab-badge" id="badge-trajectory">AUTONOMOUS</span>
+    </button>
+    <button class="nav-tab" data-tab="tab-guidance" onclick="switchTab('tab-guidance')">
+      <svg class="tab-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+      <span>6. Emergency Guidance & Immediate Landing</span>
+      <span class="tab-badge alert-indicator" id="badge-guidance">READY</span>
+    </button>
+    <button class="nav-tab" data-tab="tab-resources" onclick="switchTab('tab-resources')">
+      <svg class="tab-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      <span>7. NASA Space Apps 2026 & HRP Hub</span>
+      <span class="tab-badge" id="badge-resources">INNOVATION</span>
+    </button>
+  </nav>
+
+  <!-- MAIN APP CONTAINER -->
+  <main class="app-main">
+
+    <!-- ======================================================== -->
+    <!-- TAB 1: MASTER HEALTH MONITORING DASHBOARD               -->
+    <!-- ======================================================== -->
+    <!-- ======================================================== -->
+    <!-- TAB 1: MASTER HEALTH MONITORING DASHBOARD               -->
+    <!-- ======================================================== -->
+    <section id="tab-recovery" class="tab-pane active">
+      <!-- ═══ ORBITAL FLIGHT DYNAMICS & TELEMETRY HUD ═══ -->
+      <div class="orbital-flight-deck-bar">
+        <div class="ofd-item">
+          <span class="ofd-label">FLIGHT REGIME</span>
+          <div class="ofd-val highlight-green" id="ofd-regime">ORBITAL CRUISE (0.0G FREE FLOAT)</div>
+          <span class="ofd-sub font-mono">Keplerian True Anomaly: 142.8°</span>
+        </div>
+        <div class="ofd-divider"></div>
+        <div class="ofd-item">
+          <span class="ofd-label">ALTITUDE &amp; VELOCITY</span>
+          <div class="ofd-val font-mono highlight-cyan" id="ofd-alt-vel">418.4 km · 7.66 km/s</div>
+          <span class="ofd-sub font-mono">Mach 23.4 (27,576 km/h)</span>
+        </div>
+        <div class="ofd-divider"></div>
+        <div class="ofd-item">
+          <span class="ofd-label">GRAVITY ACCELERATION</span>
+          <div class="ofd-val font-mono highlight-yellow" id="ofd-g-vector">0.00001g (Micro-G)</div>
+          <span class="ofd-sub font-mono">Cephalad Fluid Shift: Active</span>
+        </div>
+        <div class="ofd-divider"></div>
+        <div class="ofd-item">
+          <span class="ofd-label">ORBITAL PERIOD &amp; BETA</span>
+          <div class="ofd-val font-mono" id="ofd-period-beta">92.8 min · Beta: +28.4°</div>
+          <span class="ofd-sub font-mono">Daylight (34m to LOS)</span>
+        </div>
+        <div class="ofd-divider"></div>
+        <div class="ofd-item">
+          <span class="ofd-label">RADIATION BELT PASSAGE</span>
+          <div class="ofd-val font-mono highlight-green" id="ofd-saa-status">SAA CLEAR (0.038 mSv/h)</div>
+          <span class="ofd-sub font-mono">Next SAA Ingress: 46 min</span>
+        </div>
+        <div class="ofd-regime-selector">
+          <button class="btn btn-sm btn-regime active" data-regime="orbit" onclick="setFlightRegime('orbit')">&#128760; Orbit (0G)</button>
+          <button class="btn btn-sm btn-regime" data-regime="ascent" onclick="setFlightRegime('ascent')">&#128640; Launch (3.8G)</button>
+          <button class="btn btn-sm btn-regime" data-regime="reentry" onclick="setFlightRegime('reentry')">&#128293; Entry (6.8G)</button>
+          <button class="btn btn-sm btn-outline" id="btn-toggle-orbit-map" onclick="toggleOrbitalGroundMap()">&#128506;&#65039; Orbit Map</button>
+        </div>
+      </div>
+
+      <!-- COLLAPSIBLE ORBITAL GROUND TRACK & SAA RADIATION MAP -->
+      <div class="card card-orbital-ground-map" id="card-orbital-ground-map" style="display:none; margin-bottom: 14px;">
+        <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span class="badge-live">&#128752; ORBITAL GROUND TRACK &amp; SAA RADIATION HOTSPOT</span>
+            <span class="font-mono" style="font-size:0.7rem;color:var(--text-muted);">Real-time orbital ground projection &amp; Deep Space Network (Goldstone, Madrid, Canberra)</span>
+          </div>
+          <span class="font-mono highlight-cyan" style="font-size:0.72rem;">ORBIT INCLINATION: 51.64°</span>
+        </div>
+        <div class="orbital-map-canvas-wrapper" style="padding: 8px; background: #030712; border-radius: 6px;">
+          <canvas id="orbital-ground-canvas" width="900" height="260" style="width:100%; height:auto;"></canvas>
+        </div>
+      </div>
+
+
+      <!-- ═══ DASHBOARD ROW 1: ECG WAVEFORMS + VITALS TILES + RAD/DISTANCE ══ -->
+      <div class="dash-row dash-row-top">
+
+        <!-- LIVE ECG/PPG WAVEFORMS -->
+        <div class="card dash-card-waveforms">
+          <div class="card-header">
+            <div class="header-left-meta">
+              <span class="badge-live">LIVE BIO-TELEMETRY</span>
+              <h3 class="card-title" style="font-size:0.9rem;">ECG Lead-II &amp; SpO2 Plethysmograph</h3>
+            </div>
+            <div class="header-right-meta"><span class="sensor-tag">1000 Hz · BT-LE MESH</span></div>
+          </div>
+          <div class="oscilloscope-container">
+            <div class="canvas-wrapper">
+              <div class="canvas-channel-label">
+                <span class="channel-name">ECG CH-1 (Lead-II)</span>
+                <span id="canvas-hr-val" class="channel-stat highlight-green">72 BPM</span>
+              </div>
+              <canvas id="ecg-canvas" width="800" height="80"></canvas>
+            </div>
+            <div class="canvas-wrapper">
+              <div class="canvas-channel-label">
+                <span class="channel-name">PPG PULSE OX (SpO2)</span>
+                <span id="canvas-spo2-val" class="channel-stat highlight-cyan">98.4 %</span>
+              </div>
+              <canvas id="ppg-canvas" width="800" height="80"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- VITALS TILES -->
+        <div class="dash-vitals-col">
+          <div class="vital-metric-card dash-vital-sm" id="card-hr"><div class="vm-title">&#10084;&#65039; HR</div><div class="vm-value"><span id="val-hr" class="num font-mono">72</span> <span class="unit">bpm</span></div><div class="vm-status nominal">NORMAL SINUS</div></div>
+          <div class="vital-metric-card dash-vital-sm" id="card-bp"><div class="vm-title">&#129658; BP</div><div class="vm-value"><span id="val-bp" class="num font-mono">118/76</span> <span class="unit">mmHg</span></div><div class="vm-status nominal">EUVOLEMIC</div></div>
+          <div class="vital-metric-card dash-vital-sm" id="card-spo2"><div class="vm-title">&#129754; SpO2</div><div class="vm-value"><span id="val-spo2" class="num font-mono">98.4</span> <span class="unit">%</span></div><div class="vm-status nominal">OPTIMAL</div></div>
+          <div class="vital-metric-card dash-vital-sm" id="card-temp"><div class="vm-title">&#127777;&#65039; TEMP</div><div class="vm-value"><span id="val-temp" class="num font-mono">37.1</span> <span class="unit">°C</span></div><div class="vm-status nominal">NORMOTHERMIC</div></div>
+          <div class="vital-metric-card dash-vital-sm" id="card-icp"><div class="vm-title">&#129504; ICP/ONSD</div><div class="vm-value"><span id="val-icp" class="num font-mono">14.2</span> <span class="unit">mmHg</span></div><div class="vm-status nominal">STABLE SANS</div></div>
+          <div class="vital-metric-card dash-vital-sm" id="card-resprate"><div class="vm-title">&#128168; RESP</div><div class="vm-value"><span id="val-resp" class="num font-mono">14</span> <span class="unit">br/min</span></div><div class="vm-status nominal">EUPNEIC</div></div>
+        </div>
+
+        <!-- RADIATION & DISTANCE PANEL -->
+        <div class="card dash-card-rad-dist">
+          <div class="card-header"><span class="badge-accent">&#9762;&#65039; RADIATION &amp; DISTANCE</span></div>
+          <div class="rad-dist-compact">
+            <div class="rdc-block"><div class="rdc-label">DISTANCE FROM EARTH</div><div class="rdc-value font-mono highlight-cyan" id="dash-dist">56,420,800 km</div><div class="rdc-sub font-mono">0.377 AU · 1-WAY: <span id="dash-delay">3m 08s</span></div></div>
+            <div class="rdc-divider"></div>
+            <div class="rdc-block"><div class="rdc-label">&#9762;&#65039; DOSE RATE (HAB)</div><div class="rdc-value font-mono highlight-orange" id="dash-doserate">0.038 mSv/h</div><div class="rdc-sub font-mono">GCR Fe-56 · 50 MeV/n</div></div>
+            <div class="rdc-divider"></div>
+            <div class="rdc-block"><div class="rdc-label">CUMULATIVE DOSE</div><div class="rdc-value font-mono highlight-yellow" id="dash-cumdose">34.8 mSv</div><div class="rdc-sub font-mono">14% of 250 mSv career PEL</div></div>
+            <div class="rdc-divider"></div>
+            <div class="rdc-block"><div class="rdc-label">&#128737;&#65039; STORM SHELTER</div><div class="rdc-value font-mono highlight-green">READY</div><div class="rdc-sub font-mono">38 g/cm² H₂O · 96h cap.</div></div>
+            <div class="rdc-ars-bar">
+              <div class="rdc-ars-label font-mono">ARS: 0.14 Gy / 3.5 Gy LD50/60</div>
+              <div class="rdc-ars-track"><div class="rdc-ars-fill" id="dash-ars-fill" style="width:4%"></div></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ═══ DASHBOARD: ALL 4 CREW MEMBERS SIMULTANEOUS TELEMETRY MATRIX ══ -->
+      <div class="card card-all-crew-matrix">
+        <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span class="badge-live">&#128101; ALL 6 CREW SCIENTISTS · SIMULTANEOUS TELEMETRY MATRIX</span>
+            <span class="font-mono" style="font-size:0.7rem;color:var(--text-muted);">LIVE MULTI-CREW MONITORING · TAP ANY MEMBER TO SWITCH FOCUS</span>
+          </div>
+          <span class="font-mono highlight-green" style="font-size:0.75rem;">CREW STATUS: 6/6 NOMINAL</span>
+        </div>
+        <div class="all-crew-grid" id="all-crew-matrix-container">
+          <!-- Populated dynamically via JS: 6 scientists live cards -->
+        </div>
+      </div>
+
+      <!-- ═══ DASHBOARD ROW 2: DR. ASTRIS + EHR + BONE/ISOLATION ══ -->
+      <div class="dash-row dash-row-mid">
+
+        <!-- DOCTOR CONSULTATION -->
+        <div class="card card-doctor-consult">
+          <div class="card-header">
+            <div class="doctor-badge-meta">
+              <div class="doc-avatar-ring"><span class="doc-icon">&#128105;&#8205;&#9877;&#65039;</span></div>
+              <div>
+                <h3 class="card-title">Chief Flight Surgeon Dr. ASTRIS, MD</h3>
+                <span class="doc-sub">Autonomous Aerospace Medical Directorate | SMOD Houston Direct</span>
+              </div>
+            </div>
+            <div class="doc-header-controls" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+              <button id="btn-toggle-doctor-voice" class="btn btn-sm btn-voice-active" onclick="toggleDoctorVoice()" title="Toggle Voice"><span id="voice-icon">&#128266;</span> <span id="voice-label">Doctor Voice: ON</span></button>
+              <button id="btn-toggle-handsfree-mic" class="btn btn-sm btn-outline" onclick="toggleHandsFreeMic()" title="Toggle Voice Recognition Mic">&#127908; Voice Mic: ON</button>
+              <button class="btn btn-sm btn-critical-pulse" onclick="triggerCriticalEmergencyHandsFree()" title="Simulate Critical Scientist (Hands-Free Override)">&#128680; Critical Override</button>
+              <button id="btn-stop-doctor-speech" class="btn btn-sm btn-outline" onclick="stopDoctorSpeech()" title="Stop Voice">&#9209; Mute</button>
+              <div class="doc-status-pill"><span class="live-dot-green"></span><span class="font-mono">CLINICAL ROUNDS</span></div>
+            </div>
+          </div>
+
+          <!-- AUTONOMOUS HANDS-FREE DIRECTIVE HUD -->
+          <div id="handsfree-directive-hud" class="handsfree-directive-hud">
+            <div class="hfd-pulse-badge">
+              <span class="hfd-live-beacon"></span>
+              <span class="hfd-beacon-text font-mono">AUTONOMOUS HANDS-FREE PROTOCOL · ZERO-TOUCH VOICE ENGINE ACTIVE</span>
+            </div>
+            <div class="hfd-status-row">
+              <span class="hfd-mic-icon">&#127908;</span>
+              <span id="hfd-voice-status" class="hfd-voice-status font-mono">LISTENING FOR ASTRONAUT VOICE DIRECTIVES...</span>
+            </div>
+            <div class="hfd-command-hints font-mono">
+              Incapacitated in anti-G couch? Speak commands out loud: <strong>"Doctor"</strong> · <strong>"Repeat Precautions"</strong> · <strong>"Next Step"</strong> · <strong>"Switch to Radiation"</strong> · <strong>"Switch to Guidance"</strong> · <strong>"Acknowledge"</strong>
+            </div>
+            <div class="hfd-voice-sim-strip">
+              <span class="hfd-sim-lbl font-mono">Simulate Vocal Response:</span>
+              <button type="button" class="btn-voice-sim" onclick="simulateVoiceCommand('repeat precautions')">&#128483;&#65039; "Repeat Precautions"</button>
+              <button type="button" class="btn-voice-sim" onclick="simulateVoiceCommand('switch to radiation')">&#128483;&#65039; "Switch to Radiation"</button>
+              <button type="button" class="btn-voice-sim" onclick="simulateVoiceCommand('switch to guidance')">&#128483;&#65039; "Switch to Guidance"</button>
+              <button type="button" class="btn-voice-sim" onclick="simulateVoiceCommand('switch to trajectory')">&#128483;&#65039; "Switch to Trajectory"</button>
+              <button type="button" class="btn-voice-sim" onclick="simulateVoiceCommand('doctor vitals check')">&#128483;&#65039; "Doctor Vitals Check"</button>
+              <button type="button" class="btn-voice-sim" onclick="simulateVoiceCommand('acknowledge')">&#128483;&#65039; "Acknowledge"</button>
+            </div>
+          </div>
+
+          <div class="doctor-chat-feed" id="doctor-chat-feed">
+            <div class="chat-message doc-msg">
+              <div class="cm-avatar">&#128105;&#8205;&#9877;&#65039;</div>
+              <div class="cm-body">
+                <div class="cm-sender">Dr. ASTRIS, MD <span class="cm-time font-mono">[Chief Flight Surgeon]</span></div>
+                <div class="cm-text" id="doc-initial-greeting">Good morning, Commander Srikanth. I am reviewing your biometric telemetry stream right now. Your cardiovascular tone is holding steady at 72 BPM and oxygenation is strong at 98.6%. With your 6-scientist crew (Srikanth, Sersan, Surya, Siva, Vishal, Sabari) 42 days out in deep space, we are actively managing lumbar bone mineral density, radiation dosimetry, and cephalic fluid shift. If any critical physiological collapse occurs, do not attempt to touch tabs — my autonomous emergency care engine will seize remote command and deliver all clinical precautions through audio voice synthesis and telemetry directives. How are you feeling right now? <button class="btn btn-sm btn-outline" style="margin-left:6px;padding:2px 8px;font-size:0.7rem;" onclick="speakDoctor(document.getElementById('doc-initial-greeting').innerText)">&#128266; Listen</button></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- FLIGHT SURGEON PRECAUTIONS DISPATCHER -->
+          <div class="doctor-precautions-dispatcher">
+            <div class="dpd-header">
+              <span class="dpd-title font-mono">&#9889; FLIGHT SURGEON PRECAUTIONS &amp; DIRECTIVES (VOICE + TEXT)</span>
+              <span class="dpd-sub font-mono">Simultaneous audio synthesis &amp; real-time clinical telemetry dispatch</span>
+            </div>
+            <div class="dpd-btn-grid">
+              <button type="button" class="btn-precaution btn-crit-override" onclick="triggerCriticalEmergencyHandsFree()">
+                <span class="bp-icon">&#128680;</span>
+                <div class="bp-info">
+                  <strong>Hands-Free Critical Override</strong>
+                  <span>Incapacitated Scientist Auto-Triage &amp; Spoken Protocols</span>
+                </div>
+              </button>
+              <button type="button" class="btn-precaution" onclick="dispatchSpokenAdvice('radiation_precautions')">
+                <span class="bp-icon">&#9762;&#65039;</span>
+                <div class="bp-info">
+                  <strong>Solar Radiation Precautions</strong>
+                  <span>Storm Shelter, Ondansetron &amp; Water Wall Directives</span>
+                </div>
+              </button>
+              <button type="button" class="btn-precaution" onclick="dispatchSpokenAdvice('bone_crush_precautions')">
+                <span class="bp-icon">&#129460;</span>
+                <div class="bp-info">
+                  <strong>Bone Crush &amp; G-Load Precautions</strong>
+                  <span>Transverse Anti-G Couch &amp; Teriparatide Dosing</span>
+                </div>
+              </button>
+              <button type="button" class="btn-precaution" onclick="dispatchSpokenAdvice('sans_precautions')">
+                <span class="bp-icon">&#128065;&#65039;</span>
+                <div class="bp-info">
+                  <strong>SANS &amp; Vision Loss Precautions</strong>
+                  <span>LBNP Decompression &amp; Diamox Pressure Reduction</span>
+                </div>
+              </button>
+              <button type="button" class="btn-precaution" onclick="dispatchSpokenAdvice('hypoxia_precautions')">
+                <span class="bp-icon">&#127788;&#65039;</span>
+                <div class="bp-info">
+                  <strong>Hypoxia &amp; Pressure Loss Precautions</strong>
+                  <span>100% O2 Mask &amp; Autonomous Compartment Lockdown</span>
+                </div>
+              </button>
+              <button type="button" class="btn-precaution" onclick="dispatchSpokenAdvice('isolation_precautions')">
+                <span class="bp-icon">&#129496;</span>
+                <div class="bp-info">
+                  <strong>Isolation &amp; Confinement Precautions</strong>
+                  <span>Biophilic VR Reset &amp; Autonomic Paced Vagus Directives</span>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <div class="quick-symptoms-tray">
+            <span class="qst-label">QUICK SYMPTOM INTAKE:</span>
+            <div class="qst-buttons">
+              <button class="btn-symptom-chip btn-confidence-chip" data-symptom="doctor_confidence">&#128170; Give Me Confidence</button>
+              <button class="btn-symptom-chip btn-confidence-chip" data-symptom="vitals_safety">&#10084;&#65039; Vitals Check &amp; Safety</button>
+              <button class="btn-symptom-chip" data-symptom="spine_crush">&#129460; Back &amp; G-Force Bones</button>
+              <button class="btn-symptom-chip" data-symptom="rad_nausea">&#9889; Radiation Safety Check</button>
+              <button class="btn-symptom-chip" data-symptom="sans_headache">&#128065;&#65039; Vision Blur / SANS</button>
+              <button class="btn-symptom-chip" data-symptom="isolation_anxiety">&#129496; Overcome Isolation</button>
+              <button class="btn-symptom-chip" data-symptom="crew_morale">&#128101; Crew Morale Boost</button>
+              <button class="btn-symptom-chip" data-symptom="nominal_check">&#129658; Daily Medical Rounds</button>
+            </div>
+          </div>
+          <div class="chat-input-bar">
+            <input type="text" id="chat-patient-input" class="chat-patient-input" placeholder="Describe symptoms to Dr. ASTRIS…">
+            <button id="btn-send-patient-msg" class="btn btn-primary">Send</button>
+          </div>
+        </div>
+
+        <!-- PATIENT EHR -->
+        <div class="card card-patient-ehr">
+          <div class="card-header">
+            <div><span class="badge-live">EHR</span><h3 class="card-title" id="ehr-patient-title" style="font-size:0.88rem;">CDR Srikanth | Active Record</h3></div>
+            <button id="btn-export-ehr" class="btn btn-sm btn-outline">Export</button>
+          </div>
+          <div class="ehr-vitals-strip">
+            <div class="evs-item"><span class="evs-lbl">BP:</span><span class="evs-val font-mono" id="ehr-bp">118/76</span></div>
+            <div class="evs-item"><span class="evs-lbl">MAP:</span><span class="evs-val font-mono" id="ehr-map">90</span></div>
+            <div class="evs-item"><span class="evs-lbl">HR:</span><span class="evs-val font-mono" id="ehr-hr">72 bpm</span></div>
+            <div class="evs-item"><span class="evs-lbl">SpO2:</span><span class="evs-val font-mono" id="ehr-spo2">98.4%</span></div>
+            <div class="evs-item"><span class="evs-lbl">ONSD:</span><span class="evs-val font-mono" id="ehr-onsd">5.1 mm</span></div>
+            <div class="evs-item"><span class="evs-lbl">BMD:</span><span class="evs-val font-mono highlight-orange" id="ehr-bmd">-1.5%/mo</span></div>
+          </div>
+          <div class="soap-note-container" id="soap-note-container">
+            <div class="soap-label">S</div><div class="soap-text" id="soap-S">No acute complaints. Day 42 Mars Transit. Mild lumbar stiffness post-ARED.</div>
+            <div class="soap-label">O</div><div class="soap-text" id="soap-O">BP 118/76, HR 72 NSR, SpO2 98.4%, Temp 37.1°C, ONSD 5.1mm (ICP ~14.2 mmHg). Radiation 34.8 mSv cumul.</div>
+            <div class="soap-label">A</div><div class="soap-text" id="soap-A">Cardiovascular stable. SANS low-moderate (ONSD borderline). Bone deconditioning ongoing. PEL 14%.</div>
+            <div class="soap-label">P</div><div class="soap-text" id="soap-P">150min ARED, 2.5L hydration, LBNP 20mmHg x2h, Vitamin D3 2000IU + Teriparatide. BMD DXA at Day 60.</div>
+          </div>
+          <div class="medication-dispenser-box">
+            <div class="mdb-header"><span class="mdb-title">&#128138; DAILY RX DISPENSER</span><span class="mdb-adherence font-mono highlight-green" id="med-adherence-pct">ADHERENCE: 100%</span></div>
+            <div class="med-list" id="med-prescription-list">
+              <div class="med-item completed"><input type="checkbox" class="med-chk" id="med-1" checked><div class="med-info"><div class="med-name">Teriparatide 20mcg SubQ</div><div class="med-sub">Bone remineralization</div></div><span class="med-time font-mono">08:00 &#10003;</span></div>
+              <div class="med-item completed"><input type="checkbox" class="med-chk" id="med-2" checked><div class="med-info"><div class="med-name">Vitamin D3 2000 IU PO</div><div class="med-sub">Calcium &amp; immune support</div></div><span class="med-time font-mono">08:30 &#10003;</span></div>
+              <div class="med-item"><input type="checkbox" class="med-chk" id="med-3"><div class="med-info"><div class="med-name">Oral Rehydration 1.2L</div><div class="med-sub">Plasma volume restore</div></div><span class="med-time font-mono highlight-yellow">14:00 &#8987;</span></div>
+              <div class="med-item"><input type="checkbox" class="med-chk" id="med-4"><div class="med-info"><div class="med-name">Filgrastim 300mcg SQ (PRN)</div><div class="med-sub">Marrow rescue post-SPE</div></div><span class="med-time font-mono">STANDBY</span></div>
+            </div>
+          </div>
+          <div class="biofeedback-coach-box">
+            <div class="bfc-header">
+              <div><span class="bfc-title">&#129754; Vagal Breathing Coach</span><div class="bfc-sub">Box 4-4-4-4s · HRV Recovery</div></div>
+              <button id="btn-toggle-breathing" class="btn btn-primary btn-sm">Start</button>
+            </div>
+            <div class="breathing-visual-container">
+              <div class="breathing-circle-pacer" id="breathing-circle"><div class="pacer-text font-mono" id="breathing-cue">INHALE (4s)</div></div>
+              <div class="breathing-metrics font-mono"><div>HRV: <strong class="highlight-green">RMSSD &gt; 45ms</strong></div><div>TONE: <strong class="highlight-cyan" id="autonomic-tone-val">VAGAL</strong></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- BONE CRUSH + ISOLATION COMPACT -->
+        <div class="card dash-card-bone">
+          <div class="card-header">
+            <div><span class="badge-live-emergency">&#129460; G-FORCE HAZARD</span><h3 class="card-title" style="font-size:0.85rem;">Bone Crush &amp; Fracture Risk</h3></div>
+            <span class="font-mono highlight-orange" id="bone-hazard-status" style="font-size:0.68rem;">NOMINAL</span>
+          </div>
+          <div class="bone-crush-container">
+            <div class="bone-explain" style="font-size:0.72rem;">Microgravity causes <strong>1–1.5% BMD/month</strong> loss. At <strong>8.2G</strong> ballistic abort, axial compression can fracture osteopenic vertebrae.</div>
+            <div class="gload-simulator-box">
+              <div class="gl-header"><span style="font-size:0.72rem;">SIMULATE RE-ENTRY G-LOAD:</span><span class="font-mono highlight-cyan" id="gload-val-text" style="font-size:0.8rem;">1.0 G</span></div>
+              <input type="range" id="gload-slider" min="1.0" max="10.0" step="0.2" value="1.0" class="gload-range">
+              <div class="gload-scale font-mono" style="font-size:0.58rem;"><span>1G</span><span>3.5G</span><span>5G</span><span>8.2G</span><span>10G</span></div>
+            </div>
+            <div class="fracture-metrics-grid" style="grid-template-columns:1fr 1fr;gap:6px;">
+              <div class="fm-card"><span class="fm-label">Axial Force:</span><span class="fm-val font-mono highlight-cyan" id="calc-axial-force">0.78 kN</span></div>
+              <div class="fm-card"><span class="fm-label">BMD Loss:</span><span class="fm-val font-mono highlight-orange" id="calc-bmd-loss">-1.50%</span></div>
+              <div class="fm-card"><span class="fm-label">Fracture Risk:</span><span class="fm-val font-mono highlight-green" id="calc-fracture-risk">1.2%</span></div>
+              <div class="fm-card"><span class="fm-label">Couch Posture:</span><span class="fm-val font-mono" id="calc-couch-posture">+Gx 75°</span></div>
+            </div>
+          </div>
+          <div style="margin-top:10px;border-top:1px solid var(--border-subtle);padding-top:8px;">
+            <div class="card-header" style="margin-bottom:6px;border:none;padding:0;"><span class="badge-accent">&#127756; ISOLATION INDEX</span></div>
+            <div class="isolation-compact-grid">
+              <div class="iso-metric"><div class="iso-lbl">EARTH DIST</div><div class="iso-val font-mono highlight-cyan" id="dash-iso-dist">56.4M km</div></div>
+              <div class="iso-metric"><div class="iso-lbl">SLEEP</div><div class="iso-val font-mono highlight-green">6.8h Deep</div></div>
+              <div class="iso-metric"><div class="iso-lbl">PVT LAPSES</div><div class="iso-val font-mono highlight-green">0</div></div>
+              <div class="iso-metric"><div class="iso-lbl">MOOD</div><div class="iso-val font-mono highlight-cyan">7.2/10</div></div>
+              <div class="iso-metric"><div class="iso-lbl">EARTH VIEW</div><div class="iso-val font-mono highlight-orange" style="font-size:0.65rem;">PALE BLUE DOT</div></div>
+              <div class="iso-metric"><div class="iso-lbl">COMM DELAY</div><div class="iso-val font-mono highlight-yellow" id="dash-iso-delay">3m 08s</div></div>
+            </div>
+            <div class="pale-blue-dot-container-sm">
+              <canvas id="pale-dot-canvas-dash" width="260" height="70"></canvas>
+              <div class="pbd-label-sm font-mono">Earth at 56.4M km · "Pale Blue Dot" — Carl Sagan, 1994</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ DASHBOARD ROW 3: EMERGENCY QUICK RESPONSE + SBAR DOWNLINK ══ -->
+      <div class="dash-row dash-row-bottom">
+        <div class="card dash-card-quick-protocols">
+          <div class="card-header">
+            <span class="badge-live-emergency">&#9889; EMERGENCY RESPONSE CENTER</span>
+            <span class="font-mono" style="font-size:0.65rem;color:var(--text-dim);">ONE-CLICK PROTOCOL ACTIVATION · AUTONOMOUS FLIGHT SURGEON</span>
+          </div>
+          <div class="quick-protocol-grid">
+            <button class="qp-btn qp-critical" onclick="switchTab('tab-guidance')"><div class="qp-icon">&#9728;&#65039;</div><div class="qp-label">SPE SHELTER<br><span class="qp-sub">Solar Radiation Surge</span></div></button>
+            <button class="qp-btn qp-critical" onclick="switchTab('tab-trajectory')"><div class="qp-icon">&#128640;</div><div class="qp-label">ABORT &amp; LAND<br><span class="qp-sub">TEI &#916;v = 1,420 m/s</span></div></button>
+            <button class="qp-btn qp-warning" onclick="switchTab('tab-guidance')"><div class="qp-icon">&#129460;</div><div class="qp-label">BONE CRUSH<br><span class="qp-sub">High-G Entry Protocol</span></div></button>
+            <button class="qp-btn qp-warning" onclick="switchTab('tab-guidance')"><div class="qp-icon">&#128065;&#65039;</div><div class="qp-label">SANS ALERT<br><span class="qp-sub">ICP / Optic Decompression</span></div></button>
+            <button class="qp-btn qp-warning" onclick="switchTab('tab-guidance')"><div class="qp-icon">&#129754;</div><div class="qp-label">HYPOXIA<br><span class="qp-sub">Cabin Decompression</span></div></button>
+            <button class="qp-btn qp-warning" onclick="switchTab('tab-guidance')"><div class="qp-icon">&#10084;&#65039;</div><div class="qp-label">ARRHYTHMIA<br><span class="qp-sub">Ventricular Tachycardia</span></div></button>
+            <button class="qp-btn qp-nominal" onclick="switchTab('tab-behavioral')"><div class="qp-icon">&#127756;</div><div class="qp-label">ISOLATION RESET<br><span class="qp-sub">Biophilic VR · Earth View</span></div></button>
+            <button class="qp-btn qp-nominal" onclick="switchTab('tab-radiation')"><div class="qp-icon">&#9883;&#65039;</div><div class="qp-label">RADIATION HUD<br><span class="qp-sub">Tissue Bragg Penetration</span></div></button>
+          </div>
+        </div>
+        <div class="card dash-card-sbar">
+          <div class="card-header">
+            <span class="badge-accent">&#128225; SBAR DOWNLINK</span>
+            <button id="btn-generate-sbar" class="btn btn-sm btn-secondary">Transmit to Houston</button>
+          </div>
+          <textarea id="sbar-text" class="sbar-textarea font-mono" rows="6" readonly>
+[ASTRIS-BIO CLINICAL DOWNLINK]
+MET: 042d 18h 44m 12s | DSN MADRID
+PATIENT: CDR Srikanth (ASTRO-01)
+DISTANCE: 56,420,800 km | DELAY: 03m 08s
+
+SITUATION: Nominal telemetry across all bio-sensors.
+BACKGROUND: Day 42 Mars Transit. ARED compliance 86.7%.
+ASSESSMENT: CV stable. ONSD 5.1mm. Radiation 34.8 mSv (14% PEL).
+RECOMMENDATION: 150min ARED, 2.5L hydration, LBNP 2h daily.
+          </textarea>
+          <div class="sbar-actions-row">
+            <button id="btn-copy-sbar" class="btn btn-sm btn-outline">Copy Report</button>
+            <button id="btn-clear-logs" class="btn-clear font-mono">Clear Logs</button>
+          </div>
+          <div class="event-log-container" id="event-log-list" style="height:90px;margin-top:6px;">
+            <div class="log-entry log-nominal"><span class="log-time font-mono">[MET+42d]</span><span class="log-badge-tag tag-nom">NOMINAL</span><span class="log-msg">ASTRIS-Bio health suite online. All sensors calibrated.</span></div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- TAB 2: PHYSIOLOGY & BONE CRUSHING (G-LOAD) RISKS        -->
+    <!-- ======================================================== -->
+    <section id="tab-physiology" class="tab-pane">
+      <div class="pane-grid-layout">
+        
+        <!-- Left: Continuous Waveforms & Realtime Vitals -->
+        <div class="card card-telemetry-waveforms">
+          <div class="card-header">
+            <div class="header-left-meta">
+              <span class="badge-live">LIVE TELEMETRY STREAM</span>
+              <h3 class="card-title">Continuous Cardiovascular & Plethysmograph Oscilloscope</h3>
+            </div>
+            <div class="header-right-meta">
+              <span class="sensor-tag">LEAD-II ECG & PLETHYSMOGRAM</span>
+              <span class="sample-rate">1000 Hz / BT-LE MESH</span>
+            </div>
+          </div>
+          
+          <div class="oscilloscope-container">
+            <div class="canvas-wrapper">
+              <div class="canvas-channel-label">
+                <span class="channel-name">ECG CH-1</span>
+                <span id="canvas-hr-val-phys" class="channel-stat highlight-green">72 BPM</span>
+              </div>
+              <canvas id="ecg-canvas-phys" width="800" height="130"></canvas>
+            </div>
+
+            <div class="canvas-wrapper">
+              <div class="canvas-channel-label">
+                <span class="channel-name">PPG PULSE OX (SpO2)</span>
+                <span id="canvas-spo2-val-phys" class="channel-stat highlight-cyan">98.4 %</span>
+              </div>
+              <canvas id="ppg-canvas-phys" width="800" height="90"></canvas>
+            </div>
+          </div>
+
+          <!-- Realtime Vitals Grid -->
+          <div class="vitals-quick-grid">
+            <div class="vital-metric-card" id="card-hr-phys">
+              <div class="vm-title">HEART RATE</div>
+              <div class="vm-value"><span id="val-hr-phys" class="num font-mono">72</span> <span class="unit">bpm</span></div>
+              <div class="vm-range">RESTING TARGET: 60-85 BPM</div>
+              <div class="vm-status nominal">NORMAL SINUS</div>
+            </div>
+
+            <div class="vital-metric-card" id="card-bp-phys">
+              <div class="vm-title">BLOOD PRESSURE</div>
+              <div class="vm-value"><span id="val-bp-phys" class="num font-mono">118/76</span> <span class="unit">mmHg</span></div>
+              <div class="vm-range">MAP: <span id="val-map-phys">90</span> mmHg</div>
+              <div class="vm-status nominal">EUVOLEMIC</div>
+            </div>
+
+            <div class="vital-metric-card" id="card-spo2-phys">
+              <div class="vm-title">OXYGEN SATURATION</div>
+              <div class="vm-value"><span id="val-spo2-phys" class="num font-mono">98.4</span> <span class="unit">%</span></div>
+              <div class="vm-range">CABIN pO2: 21.2 kPa</div>
+              <div class="vm-status nominal">ADEQUATE PERFUSION</div>
+            </div>
+
+            <div class="vital-metric-card" id="card-temp-phys">
+              <div class="vm-title">CORE BODY TEMP</div>
+              <div class="vm-value"><span id="val-temp-phys" class="num font-mono">37.1</span> <span class="unit">&deg;C</span></div>
+              <div class="vm-range">CIRCADIAN PEAK: 37.4&deg;C</div>
+              <div class="vm-status nominal">NORMOTHERMIC</div>
+            </div>
+
+            <div class="vital-metric-card" id="card-icp-phys">
+              <div class="vm-title">INTRACRANIAL PRESSURE (EST.)</div>
+              <div class="vm-value"><span id="val-icp-phys" class="num font-mono">14.2</span> <span class="unit">mmHg</span></div>
+              <div class="vm-range">ONSD: <span id="val-onsd-phys">5.1</span> mm</div>
+              <div class="vm-status nominal">STABLE SANS TONE</div>
+            </div>
+
+            <div class="vital-metric-card" id="card-resprate-phys">
+              <div class="vm-title">RESPIRATORY RATE</div>
+              <div class="vm-value"><span id="val-resp-phys" class="num font-mono">14</span> <span class="unit">br/min</span></div>
+              <div class="vm-range">END-TIDAL CO2: 36 mmHg</div>
+              <div class="vm-status nominal">EUPNEIC</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: "Bone Crushing" Gravity Re-entry & Musculoskeletal Fracture Risk -->
+        <div class="card card-bone-crush">
+          <div class="card-header">
+            <div>
+              <span class="badge-live-emergency">GRAVITY HAZARD</span>
+              <h3 class="card-title">"Bone Crushing" G-Force Fracture & Osteopenia Risk</h3>
+            </div>
+            <span class="font-mono highlight-orange" id="bone-hazard-status-phys">NOMINAL MICRO-G</span>
+          </div>
+
+          <div class="bone-crush-container">
+            <div class="bone-explain">
+              In microgravity, bone loses <strong>1.0% to 1.5% BMD/month</strong>. When returning to Earth or landing under high G-forces (ballistic abort up to <strong>8.2G</strong>), compressive axial forces can cause severe <strong>vertebral compression fractures ("bone crushing")</strong>.
+            </div>
+
+            <!-- G-Force Interactive Simulation Slider -->
+            <div class="gload-simulator-box">
+              <div class="gl-header">
+                <span>SIMULATE RE-ENTRY G-LOAD (AXIAL COMPRESSION):</span>
+                <span class="font-mono highlight-cyan" id="gload-val-text-phys">1.0 G (Earth Normal)</span>
+              </div>
+              <input type="range" id="gload-slider-phys" min="1.0" max="10.0" step="0.2" value="1.0" class="gload-range">
+              <div class="gload-scale font-mono">
+                <span>1G (Normal)</span>
+                <span>3.5G (Shuttle Re-entry)</span>
+                <span>5G (Soyuz Nominal)</span>
+                <span>8.2G (Ballistic Abort)</span>
+                <span>10G (Lethal)</span>
+              </div>
+            </div>
+
+            <!-- Dynamic Fracture Hazard Matrix -->
+            <div class="fracture-metrics-grid">
+              <div class="fm-card">
+                <span class="fm-label">Lumbar Spine Axial Load:</span>
+                <span class="fm-val font-mono highlight-yellow" id="calc-axial-force-phys">0.78 kN</span>
+                <span class="fm-sub">Normal: 0.8 kN | Danger: >4.5 kN</span>
+              </div>
+              <div class="fm-card">
+                <span class="fm-label">Current BMD Loss %:</span>
+                <span class="fm-val font-mono highlight-orange" id="calc-bmd-loss-phys">-1.54%</span>
+                <span class="fm-sub">Trabecular pore volume +12%</span>
+              </div>
+              <div class="fm-card">
+                <span class="fm-label">Vertebral Fracture Risk:</span>
+                <span class="fm-val font-mono highlight-green" id="calc-fracture-risk-phys">0.4% (Minimal)</span>
+                <span class="fm-sub">L1-L5 Wedge Collapse Risk</span>
+              </div>
+              <div class="fm-card">
+                <span class="fm-label">Anti-G Couch Orientation:</span>
+                <span class="fm-val font-mono highlight-cyan" id="calc-couch-posture-phys">Transverse (+Gx) Chest In</span>
+                <span class="fm-sub">Eliminates axial (+Gz) spine crush</span>
+              </div>
+            </div>
+
+            <!-- Bone Crushing Countermeasure Guide -->
+            <div class="bone-countermeasure-box">
+              <h5 class="bcb-title">Pre-Landing Bone Protection Countermeasures:</h5>
+              <ul class="bcb-list">
+                <li><strong>Anti-G Couch Contouring:</strong> Recline astronaut to 75&deg; transverse angle (+Gx) to divert G-forces across the broad chest instead of compressive head-to-toe spinal axis (+Gz).</li>
+                <li><strong>Pneumatic Anti-G Suit (PAGS):</strong> Inflate lower abdominal and thigh bladders to 50 mmHg to stabilize pelvis and prevent venous pooling syncope.</li>
+                <li><strong>Bisphosphonate & Teriparatide (PTH) Infusion:</strong> Activates osteoblast bone remineralization 14 days before entry interface.</li>
+                <li><strong>Spinal Harness Energy Absorbers:</strong> Seat shock dampers configured to limit impact spikes to &lt; 2.5 kN.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Bottom: Interactive Anatomical Organ Map -->
+      <div class="card card-anatomical-risk">
+        <div class="card-header">
+          <h3 class="card-title">Microgravity Physiology Risk Architecture & Organ Explorer</h3>
+          <span class="info-tooltip">Interactive Body Map: Click any organ node below to inspect clinical pathology</span>
+        </div>
+
+        <div class="anatomy-explorer">
+          <div class="anatomy-visual-column">
+            <!-- SVG Silhouette -->
+            <svg id="human-anatomy-svg" viewBox="0 0 200 420" class="anatomy-svg">
+              <path class="body-base" d="M100 20 C108 20 114 28 114 38 C114 48 108 55 103 57 C109 60 128 66 136 78 C144 90 148 120 152 165 C153 175 149 180 143 180 C138 180 135 174 133 162 L131 125 L124 125 L122 220 L132 300 L134 380 C135 390 124 394 120 385 L108 285 L100 240 L92 285 L80 385 C76 394 65 390 66 380 L68 300 L78 220 L76 125 L69 125 L67 162 C65 174 62 180 57 180 C51 180 47 175 48 165 C52 120 56 90 64 78 C72 66 91 60 97 57 C92 55 86 48 86 38 C86 28 92 20 100 20 Z" />
+              
+              <!-- Head / SANS -->
+              <g class="organ-node active-node" id="node-sans" data-organ="sans">
+                <circle cx="100" cy="38" r="14" class="organ-pulse pulse-sans" />
+                <circle cx="100" cy="38" r="6" class="organ-core" />
+                <text x="100" y="42" class="node-label">SANS</text>
+              </g>
+
+              <!-- Vestibular -->
+              <g class="organ-node" id="node-vestibular" data-organ="vestibular">
+                <circle cx="120" cy="38" r="8" class="organ-pulse" />
+                <circle cx="120" cy="38" r="4" class="organ-core" />
+                <text x="138" y="42" class="node-text-sm">Vestibular</text>
+              </g>
+
+              <!-- Heart -->
+              <g class="organ-node" id="node-cardio" data-organ="cardio">
+                <circle cx="104" cy="98" r="16" class="organ-pulse pulse-cardio" />
+                <circle cx="104" cy="98" r="7" class="organ-core" />
+                <text x="104" y="102" class="node-label">HEART</text>
+              </g>
+
+              <!-- Pulmonary / Lungs -->
+              <g class="organ-node" id="node-pulmonary" data-organ="pulmonary">
+                <circle cx="82" cy="98" r="10" class="organ-pulse" />
+                <circle cx="82" cy="98" r="4" class="organ-core" />
+                <text x="58" y="100" class="node-text-sm">Lungs</text>
+              </g>
+
+              <!-- Immune & Bone Marrow -->
+              <g class="organ-node" id="node-immune" data-organ="immune">
+                <circle cx="100" cy="150" r="12" class="organ-pulse" />
+                <circle cx="100" cy="150" r="5" class="organ-core" />
+                <text x="100" y="154" class="node-label">IMMUNE</text>
+              </g>
+
+              <!-- Spine (Bone Crushing Vulnerability) -->
+              <g class="organ-node" id="node-spine" data-organ="spine">
+                <line x1="100" y1="65" x2="100" y2="185" stroke="var(--cyan-glow)" stroke-width="3" stroke-dasharray="2 4" />
+                <circle cx="100" cy="120" r="5" class="organ-core" />
+                <text x="124" y="125" class="node-text-sm">Spine BMD</text>
+              </g>
+
+              <!-- Muscles -->
+              <g class="organ-node" id="node-muscles" data-organ="muscles">
+                <circle cx="85" cy="270" r="10" class="organ-pulse" />
+                <circle cx="115" cy="270" r="10" class="organ-pulse" />
+                <circle cx="85" cy="270" r="5" class="organ-core" />
+                <circle cx="115" cy="270" r="5" class="organ-core" />
+                <text x="100" y="274" class="node-label">MUSCLE</text>
+              </g>
+            </svg>
+
+            <div class="anatomy-legend">
+              <span class="legend-item"><span class="dot-legend nominal-dot"></span> Low Risk</span>
+              <span class="legend-item"><span class="dot-legend warning-dot"></span> Moderate Shift</span>
+              <span class="legend-item"><span class="dot-legend critical-dot"></span> Critical Hazard</span>
+            </div>
+          </div>
+
+          <!-- Organ Inspection Card -->
+          <div class="organ-detail-panel" id="organ-detail-card">
+            <div class="od-header">
+              <div class="od-icon" id="od-icon">&#128065;&#65039;</div>
+              <div class="od-titles">
+                <h4 class="od-name" id="od-title">SANS (Spaceflight-Associated Neuro-ocular Syndrome)</h4>
+                <span class="od-risk-tier" id="od-tier">HIGH PRIORITY RISK (HRP RED)</span>
+              </div>
+            </div>
+
+            <div class="od-body">
+              <div class="od-section">
+                <span class="od-subhead">MICROGRAVITY PATHOPHYSIOLOGY</span>
+                <p id="od-pathology" class="od-text">Loss of hydrostatic pressure gradients causes chronic cephalad fluid shift, elevated jugular venous congestion, decreased CSF drainage, leading to optic disc edema, globe flattening, choroidal folds, and hyperopic refractive shift.</p>
+              </div>
+
+              <div class="od-metrics-grid">
+                <div class="od-metric"><span class="od-m-lbl">ONSD Diameter:</span><span class="od-m-val font-mono" id="od-val1">5.1 mm (Norm &lt; 5.8)</span></div>
+                <div class="od-metric"><span class="od-m-lbl">Estimated ICP:</span><span class="od-m-val font-mono" id="od-val2">14.2 mmHg</span></div>
+                <div class="od-metric"><span class="od-m-lbl">Refractive Shift:</span><span class="od-m-val font-mono" id="od-val3">+0.25 Diopter</span></div>
+                <div class="od-metric"><span class="od-m-lbl">LBNP Countermeasure:</span><span class="od-m-val font-mono" id="od-val4">Scheduled 14:00 MET</span></div>
+              </div>
+
+              <div class="od-section">
+                <span class="od-subhead">STANDARD COUNTERMEASURES</span>
+                <ul id="od-countermeasures" class="od-list">
+                  <li>Lower Body Negative Pressure (LBNP) 20 mmHg for 2 hours daily.</li>
+                  <li>Venous Thigh Choke Cuffs during sleep to sequester lower-limb fluid.</li>
+                  <li>Fundoscopy & Optical Coherence Tomography (OCT) every 14 days.</li>
+                  <li>Acetazolamide protocol ready if acute papilledema occurs.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- TAB 3: BEHAVIORAL PERFORMANCE, CONFINEMENT & ISOLATION   -->
+    <!-- ======================================================== -->
+    <section id="tab-behavioral" class="tab-pane">
+      <div class="pane-grid-layout">
+        
+        <!-- Left: Deep Space Isolation & Confinement Index -->
+        <div class="card card-isolation">
+          <div class="card-header">
+            <div>
+              <span class="badge-live">ICE ENVIRONMENT PSYCHOMETRICS</span>
+              <h3 class="card-title">Deep Space Isolation, Confinement & Earth-Out-Of-View</h3>
+            </div>
+            <span class="font-mono highlight-cyan" id="iso-index-badge">ISOLATION INDEX: 84 / 100</span>
+          </div>
+
+          <div class="isolation-container">
+            <!-- Earth Out Of View Visualizer -->
+            <div class="earth-view-box">
+              <div class="ev-visual">
+                <div class="space-backdrop">
+                  <div class="earth-dot-wrapper" id="earth-dot-view">
+                    <div class="earth-pale-blue-dot"></div>
+                    <span class="earth-callout font-mono">EARTH (PALE BLUE DOT - 0.012&deg; ARC)</span>
+                  </div>
+                </div>
+              </div>
+              <div class="ev-meta">
+                <div class="ev-title">"Earth-Out-Of-View" Existential Phenomenon</div>
+                <div class="ev-desc">
+                  At 56M km from Earth, home is reduced to a solitary pinpoint of light. Astronauts lose the psychological anchor of seeing Earth's horizon, triggering profound isolation, detachment, and emotional displacement onto ground controllers.
+                </div>
+              </div>
+            </div>
+
+            <!-- Isolation Metrics Matrix -->
+            <div class="iso-metrics-grid">
+              <div class="im-card">
+                <span class="im-label">Communication Blackout / Lag:</span>
+                <span class="im-val font-mono highlight-yellow">03m 08s (1-Way)</span>
+                <span class="im-sub">Asynchronous comms only</span>
+              </div>
+              <div class="im-card">
+                <span class="im-label">Acoustic Vocal Prosody Stress:</span>
+                <span class="im-val font-mono highlight-green" id="iso-voice-val">14 / 100 (Nominal)</span>
+                <span class="im-sub">Speech cadence stable</span>
+              </div>
+              <div class="im-card">
+                <span class="im-label">Interpersonal Crew Cohesion:</span>
+                <span class="im-val font-mono highlight-green">9.2 / 10 (High Trust)</span>
+                <span class="im-sub">No sociometric fracture</span>
+              </div>
+              <div class="im-card">
+                <span class="im-label">Sensory Deprivation Index:</span>
+                <span class="im-val font-mono highlight-cyan">MODERATE</span>
+                <span class="im-sub">Odor/acoustic monotony high</span>
+              </div>
+            </div>
+
+            <!-- Interactive Biophilic VR Nature Immersion Tool -->
+            <div class="vr-immersion-tool">
+              <div class="vrt-header">
+                <div>
+                  <span class="vrt-title">Biophilic VR Terrestrial Nature Immersion (Sensory Restorative)</span>
+                  <div class="vrt-sub">Simulates Earth biospheres to counteract auditory habitat monotony and deep-space isolation.</div>
+                </div>
+                <button id="btn-start-vr" class="btn btn-primary">Start 20-Min VR Session</button>
+              </div>
+
+              <div class="vrt-environments">
+                <button class="btn-env active" data-sound="rain">&#127794; Pacific Rainforest (480Hz Audio)</button>
+                <button class="btn-env" data-sound="waves">&#127754; Pacific Ocean Shoreline</button>
+                <button class="btn-env" data-sound="meadow">&#127806; Alpine Mountain Breeze</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Interactive Psychomotor Vigilance Test (PVT-B) -->
+        <div class="card card-pvt">
+          <div class="card-header">
+            <div>
+              <span class="badge-accent">COGNITIVE BENCHMARK</span>
+              <h3 class="card-title">Interactive Psychomotor Vigilance Test (PVT-B)</h3>
+            </div>
+            <span class="font-mono text-nominal">NASA 3-MINUTE STANDARD</span>
+          </div>
+
+          <div class="pvt-container">
+            <div class="pvt-instructions">
+              Click <strong>"START PVT TEST"</strong>, wait for the red timer counter to trigger randomly, then click <strong>"REACT NOW!"</strong> or press <strong>SPACEBAR</strong> as rapidly as possible.
+            </div>
+
+            <div class="pvt-screen" id="pvt-screen-area">
+              <div class="pvt-display-text" id="pvt-screen-status">TEST IDLE</div>
+              <div class="pvt-timer-display font-mono" id="pvt-timer-val">000.0 ms</div>
+              <div class="pvt-feedback" id="pvt-feedback-msg">Awaiting test start</div>
+            </div>
+
+            <div class="pvt-controls">
+              <button id="btn-pvt-start" class="btn btn-primary">Start PVT Test</button>
+              <button id="btn-pvt-trigger" class="btn btn-emergency-action" disabled>REACT NOW! (SPACE)</button>
+              <button id="btn-pvt-reset" class="btn btn-outline">Reset Test</button>
+            </div>
+
+            <div class="pvt-results-grid">
+              <div class="pr-box">
+                <span class="pr-lbl">Fastest Reaction:</span>
+                <span class="pr-val font-mono" id="pvt-best">-- ms</span>
+              </div>
+              <div class="pr-box">
+                <span class="pr-lbl">Mean Reaction Time:</span>
+                <span class="pr-val font-mono" id="pvt-mean">-- ms</span>
+              </div>
+              <div class="pr-box">
+                <span class="pr-lbl">Cognitive Lapses (>500ms):</span>
+                <span class="pr-val font-mono" id="pvt-lapses">0</span>
+              </div>
+              <div class="pr-box">
+                <span class="pr-lbl">Cognitive Readiness:</span>
+                <span class="pr-val font-mono highlight-green" id="pvt-readiness">PRIME FOR EVA</span>
+              </div>
+            </div>
+
+            <!-- Hypnogram & Sleep Architecture -->
+            <div class="sleep-timeline-container">
+              <div class="st-header">
+                <span>SLEEP HYPNOGRAM (ACTIGRAPHY 24H)</span>
+                <span class="font-mono">TOTAL: 7h 24m | EFFICIENCY: 88.4%</span>
+              </div>
+              <div class="hypnogram-bars">
+                <div class="hypno-seg awake" style="width: 25%;">Wake (6h)</div>
+                <div class="hypno-seg light" style="width: 35%;">Light N1/N2 (4.2h)</div>
+                <div class="hypno-seg deep" style="width: 20%;">Deep SWS (1.8h)</div>
+                <div class="hypno-seg rem" style="width: 20%;">REM (1.4h)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- TAB 4: RADIATION TISSUE PENETRATION & OVERDOSE           -->
+    <!-- ======================================================== -->
+    <section id="tab-radiation" class="tab-pane">
+      <div class="pane-grid-layout">
+        
+        <!-- Left: Organ Tissue Penetration & Bragg-Peak Model -->
+        <div class="card card-tissue-rad">
+          <div class="card-header">
+            <div>
+              <span class="badge-live">BIO-DEPOSITION PHYSICS</span>
+              <h3 class="card-title">Radiation Penetration into Human Tissues & Organs</h3>
+            </div>
+            <span class="font-mono highlight-cyan">BRAGG PEAK & HZE TRACKS</span>
+          </div>
+
+          <div class="tissue-penetration-container">
+            <div class="tp-desc">
+              High-energy Galactic Cosmic Rays (HZE iron ions <sup>56</sup>Fe) and Solar Protons penetrate spacecraft hull and deposit dense ionization columns directly into critical human organs. Click any layer below to inspect cellular damage:
+            </div>
+
+            <!-- Tissue Depth Penetration Interactive Diagram -->
+            <div class="tissue-layer-diagram">
+              <div class="layer-item active-layer" data-layer="skin">
+                <div class="layer-header">
+                  <span class="layer-title">1. Epidermis & Dermis (0-5 mm)</span>
+                  <span class="layer-dose font-mono" id="dose-skin">0.038 mSv/h</span>
+                </div>
+                <div class="layer-bar"><div class="layer-fill fill-cyan" style="width: 100%;"></div></div>
+                <div class="layer-risk">Erythema, Epilation, Basal Cell Damage</div>
+              </div>
+
+              <div class="layer-item" data-layer="lens">
+                <div class="layer-header">
+                  <span class="layer-title">2. Ocular Lens (3 mm depth)</span>
+                  <span class="layer-dose font-mono" id="dose-lens">0.036 mSv/h</span>
+                </div>
+                <div class="layer-bar"><div class="layer-fill fill-green" style="width: 95%;"></div></div>
+                <div class="layer-risk">Early-onset posterior subcapsular cataracts, Cosmic Ray Phosphene flashes</div>
+              </div>
+
+              <div class="layer-item" data-layer="cns">
+                <div class="layer-header">
+                  <span class="layer-title">3. Central Nervous System & Brain (50-120 mm)</span>
+                  <span class="layer-dose font-mono" id="dose-cns">0.031 mSv/h</span>
+                </div>
+                <div class="layer-bar"><div class="layer-fill fill-yellow" style="width: 82%;"></div></div>
+                <div class="layer-risk">Synaptic plasticity remodeling, spatial memory degradation, neuroinflammation</div>
+              </div>
+
+              <div class="layer-item" data-layer="marrow">
+                <div class="layer-header">
+                  <span class="layer-title">4. Bone Marrow / Hematopoietic (Pelvis/Femur)</span>
+                  <span class="layer-dose font-mono" id="dose-marrow">0.026 mSv/h</span>
+                </div>
+                <div class="layer-bar"><div class="layer-fill fill-orange" style="width: 68%;"></div></div>
+                <div class="layer-risk">Stem cell suppression, lymphopenia, acute immune collapse hazard</div>
+              </div>
+
+              <div class="layer-item" data-layer="gi">
+                <div class="layer-header">
+                  <span class="layer-title">5. Gastrointestinal Epithelium (Core visceral)</span>
+                  <span class="layer-dose font-mono" id="dose-gi">0.022 mSv/h</span>
+                </div>
+                <div class="layer-bar"><div class="layer-fill fill-green" style="width: 58%;"></div></div>
+                <div class="layer-risk">Microvascular leak, mucosal barrier breakdown, prodromal nausea</div>
+              </div>
+            </div>
+
+            <!-- Acute Radiation Sickness (ARS) Matrix -->
+            <div class="ars-danger-box">
+              <div class="ars-title-row">
+                <span class="ars-heading">ACUTE RADIATION SICKNESS (ARS) OVERDOSE PROFILE:</span>
+                <span class="badge-nominal" id="ars-alert-pill">SAFE BACKGROUND FLUX</span>
+              </div>
+              <div class="ars-bar-track">
+                <div class="ars-bar-fill" id="ars-progress" style="width: 3.5%;"></div>
+              </div>
+              <div class="ars-thresholds font-mono">
+                <span>0.1 Gy (Nominal)</span>
+                <span>0.7 Gy (Prodromal Nausea)</span>
+                <span>1.5 Gy (Hematopoietic Drop)</span>
+                <span>3.5 Gy (LD50/60)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Dosimeters & "Too Much Radiation" Action Engine -->
+        <div class="card card-radiation-main">
+          <div class="card-header">
+            <div>
+              <span class="badge-live">HELIOSPHERIC FLUX</span>
+              <h3 class="card-title">Cumulative Dosimetry & "Too Much Radiation" Monitor</h3>
+            </div>
+            <span class="font-mono text-nominal" id="rad-status-pill">BACKGROUND QUIET</span>
+          </div>
+
+          <div class="radiation-gauges-grid">
+            <div class="rad-gauge-card">
+              <div class="rg-header">INSTANTANEOUS DOSE RATE</div>
+              <div class="rg-value"><span id="val-dose-rate" class="num font-mono">0.038</span> <span class="unit">mSv/h</span></div>
+              <div class="rg-sub font-mono">38.4 &micro;Sv/h (GCR Background)</div>
+              <div class="rg-bar"><div id="bar-dose-rate" class="rg-bar-fill fill-green" style="width: 12%;"></div></div>
+            </div>
+
+            <div class="rad-gauge-card">
+              <div class="rg-header">CUMULATIVE MISSION DOSE</div>
+              <div class="rg-value"><span id="val-cum-dose" class="num font-mono">34.8</span> <span class="unit">mSv</span></div>
+              <div class="rg-sub font-mono">MISSION TIME: 42.8 DAYS</div>
+              <div class="rg-bar"><div id="bar-cum-dose" class="rg-bar-fill fill-cyan" style="width: 17%;"></div></div>
+            </div>
+
+            <div class="rad-gauge-card">
+              <div class="rg-header">CAREER PERMISSIBLE LIMIT (PEL)</div>
+              <div class="rg-value"><span class="num font-mono">250</span> <span class="unit">mSv max</span></div>
+              <div class="rg-sub font-mono">REID &lt; 3% FATAL CANCER RISK</div>
+              <div class="rg-bar"><div class="rg-bar-fill fill-yellow" style="width: 25%;"></div></div>
+            </div>
+
+            <div class="rad-gauge-card">
+              <div class="rg-header">SPE PROTON FLUX (&gt;100 MeV)</div>
+              <div class="rg-value"><span id="val-proton-flux" class="num font-mono">0.42</span> <span class="unit">pfu</span></div>
+              <div class="rg-sub font-mono">ALERT THRESHOLD: &gt; 10.0 pfu</div>
+              <div class="rg-bar"><div id="bar-proton-flux" class="rg-bar-fill fill-green" style="width: 4%;"></div></div>
+            </div>
+          </div>
+
+          <!-- Vessel Compartment Shielding Map -->
+          <div class="vessel-map-container">
+            <h4 class="rss-title">Habitat Shielding & Compartmental Exposure (Click to Inspect)</h4>
+            <div class="vessel-cutaway">
+              <div class="compartment comp-command" id="comp-command" data-comp="command">
+                <div class="comp-badge">COMMAND MODULE</div>
+                <div class="comp-shield">Shield: 5.2 g/cm&sup2; Al-Eq</div>
+                <div class="comp-dose font-mono" id="dose-cmd">0.038 mSv/h</div>
+                <div class="comp-status nominal">NORMAL DUTY</div>
+              </div>
+
+              <div class="compartment comp-hab" id="comp-hab" data-comp="hab">
+                <div class="comp-badge">CREW HABITAT & GALLEY</div>
+                <div class="comp-shield">Shield: 11.4 g/cm&sup2; Poly</div>
+                <div class="comp-dose font-mono" id="dose-hab">0.024 mSv/h</div>
+                <div class="comp-status nominal">NOMINAL SLEEP</div>
+              </div>
+
+              <div class="compartment comp-shelter" id="comp-shelter" data-comp="shelter">
+                <div class="comp-badge highlight-cyan">CENTRAL STORM SHELTER</div>
+                <div class="comp-shield">Shield: 38.0 g/cm&sup2; H2O / Food Pack</div>
+                <div class="comp-dose font-mono highlight-green" id="dose-shelter">0.006 mSv/h</div>
+                <div class="comp-status-shelter font-mono" id="shelter-ingress-status">READY FOR 96H RETREAT</div>
+              </div>
+
+              <div class="compartment comp-eva" id="comp-eva" data-comp="eva">
+                <div class="comp-badge">AIRLOCK / EVA BAY</div>
+                <div class="comp-shield">Shield: 2.1 g/cm&sup2; Fabric/Titanium</div>
+                <div class="comp-dose font-mono" id="dose-eva">0.046 mSv/h</div>
+                <div class="comp-status nominal">NO CURRENT EVA</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- TAB 5: DISTANCE FROM EARTH & EMERGENCY ABORT            -->
+    <!-- ======================================================== -->
+    <section id="tab-trajectory" class="tab-pane">
+      <div class="pane-grid-layout">
+        
+        <!-- Left: Deep Space Orbit & Light Time Visualizer -->
+        <div class="card card-orbit-dynamics">
+          <div class="card-header">
+            <div>
+              <span class="badge-live">ASTRODYNAMICS ENGINE</span>
+              <h3 class="card-title">Interplanetary Distance & Trajectory Map</h3>
+            </div>
+            <span class="font-mono highlight-cyan" id="traj-epoch">EPOCH: 2026 MARS ALIGNMENT</span>
+          </div>
+
+          <div class="orbit-visual-container">
+            <!-- Trajectory Visual Map -->
+            <div class="trajectory-graphic">
+              <div class="traj-body body-earth">
+                <div class="celestial-circle earth-circle"></div>
+                <span class="celestial-label">EARTH</span>
+              </div>
+
+              <div class="traj-line">
+                <div class="spacecraft-marker" id="sc-marker" style="left: 45%;">
+                  <div class="sc-icon">&#9650;</div>
+                  <span class="sc-label font-mono">ASTRIS (0.377 AU)</span>
+                </div>
+              </div>
+
+              <div class="traj-body body-mars">
+                <div class="celestial-circle mars-circle"></div>
+                <span class="celestial-label">MARS (1.52 AU)</span>
+              </div>
+            </div>
+
+            <div class="distance-deep-stats">
+              <div class="dds-card">
+                <span class="dds-lbl">True Distance from Earth:</span>
+                <span class="dds-val font-mono highlight-cyan" id="calc-earth-km">56,420,800 km</span>
+                <span class="dds-sub font-mono">0.3771 AU (1 AU = 149.6M km)</span>
+              </div>
+              <div class="dds-card">
+                <span class="dds-lbl">1-Way Light Travel Time:</span>
+                <span class="dds-val font-mono highlight-yellow" id="calc-owlt">03m 08s</span>
+                <span class="dds-sub font-mono">Round-Trip: 06m 16s</span>
+              </div>
+              <div class="dds-card">
+                <span class="dds-lbl">Autonomous Operations Necessity:</span>
+                <span class="dds-val font-mono highlight-red">100% CRITICAL</span>
+                <span class="dds-sub">Houston cannot pilot in real-time</span>
+              </div>
+              <div class="dds-card">
+                <span class="dds-lbl">Current Heliocentric Velocity:</span>
+                <span class="dds-val font-mono highlight-green">24.6 km/s</span>
+                <span class="dds-sub">Hohmann Transfer Arc</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Autonomous Emergency Earth Abort & Immediate Landing -->
+        <div class="card card-emergency-abort">
+          <div class="card-header">
+            <div>
+              <span class="badge-live-emergency">ABORT TRAJECTORY</span>
+              <h3 class="card-title">Autonomous Emergency Landing & Earth Return Abort</h3>
+            </div>
+            <span class="font-mono highlight-red" id="abort-readiness">ABORT READY (Î”V ARMED)</span>
+          </div>
+
+          <div class="abort-engine-container">
+            <div class="abort-desc">
+              When radiation overdose exceeds lethal limits (&gt;2.5 Gy) or catastrophic life support failure occurs, the onboard bio-sentinel computes the <strong>Trans-Earth Injection (TEI) Emergency Burn</strong> and initiates fast return re-entry.
+            </div>
+
+            <!-- Abort Calculations -->
+            <div class="abort-parameters-grid">
+              <div class="apg-card">
+                <span class="apg-label">Emergency Abort Delta-V:</span>
+                <span class="apg-val font-mono highlight-cyan">1,420 m/s</span>
+                <span class="apg-sub">Hypergolic OMS Burn: 4m 12s</span>
+              </div>
+              <div class="apg-card">
+                <span class="apg-label">Fast-Transit Return Time:</span>
+                <span class="apg-val font-mono highlight-yellow" id="abort-transit-days">4.2 Days (Cislunar) / 38 Days (Deep Space)</span>
+                <span class="apg-sub">Accelerated hyperbolic return</span>
+              </div>
+              <div class="apg-card">
+                <span class="apg-label">Designated Emergency Landing Zone:</span>
+                <span class="apg-val font-mono highlight-green">Pacific Prime (14&deg;N, 168&deg;W)</span>
+                <span class="apg-sub">USS Navy Medical Carrier Staged</span>
+              </div>
+              <div class="apg-card">
+                <span class="apg-label">Post-Landing Trauma Unit:</span>
+                <span class="apg-val font-mono">Hyperbaric + Marrow Support</span>
+                <span class="apg-sub">Sterile laminar air flow suite</span>
+              </div>
+            </div>
+
+            <div class="abort-trigger-section">
+              <button id="btn-arm-abort" class="btn btn-abort-action">Arm Immediate Emergency Landing & Return Burn</button>
+              <button id="btn-cancel-abort" class="btn btn-outline">Cancel Abort Sequence</button>
+            </div>
+
+            <div class="abort-status-terminal font-mono" id="abort-terminal-output">
+              [SYSTEM STANDBY] Emergency abort trajectory solutions synchronized with DSN navigation state vectors.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- TAB 6: EMERGENCY MEDICAL GUIDANCE & CHECKLISTS          -->
+    <!-- ======================================================== -->
+    <section id="tab-guidance" class="tab-pane">
+      <div class="pane-grid-layout">
+        
+        <!-- Left: Actionable Medical Emergency Protocols -->
+        <div class="card card-protocol-engine">
+          <div class="card-header">
+            <div class="protocol-header-title">
+              <span class="badge-live-emergency">AUTONOMOUS FLIGHT SURGEON</span>
+              <h3 class="card-title">Emergency Medical Protocols & Countermeasure Checklists</h3>
+            </div>
+            
+            <div class="protocol-selector-wrap">
+              <label for="protocol-select" class="protocol-label">SELECT PROTOCOL:</label>
+              <select id="protocol-select" class="protocol-dropdown">
+                <option value="spe_shelter">Protocol ALPHA: Solar Particle Event (SPE) Shelter Retreat</option>
+                <option value="emergency_abort">Protocol ZETA: Immediate Emergency Landing & Earth Return Abort</option>
+                <option value="bone_crush">Protocol ETA: Re-entry High-G Spine Compression & Fracture Mitigation</option>
+                <option value="sans_decompression">Protocol BRAVO: Acute SANS & Intracranial Hypertensive Relief</option>
+                <option value="hypoxia_emergency">Protocol CHARLIE: Acute Hypoxia & Cabin Decompression Response</option>
+                <option value="arrhythmia_syncope">Protocol DELTA: Ventricular Arrhythmia & Orthostatic Syncope</option>
+                <option value="isolation_reset">Protocol THETA: Severe Isolation Psychosis & Earth-Out-Of-View Reset</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Dynamic Active Protocol Container -->
+          <div class="active-protocol-container" id="active-protocol-box">
+            <div class="ap-topbar">
+              <div class="ap-badge-group">
+                <span class="ap-code font-mono" id="protocol-code">PROTOCOL ALPHA</span>
+                <span class="ap-severity-badge critical-badge" id="protocol-severity">CRITICAL RADIATION THREAT</span>
+              </div>
+              <div class="ap-timer-group">
+                <span class="ap-timer-label">PROTOCOL TIMELINE:</span>
+                <span class="ap-timer font-mono" id="protocol-timer">15:00 REMAINING</span>
+                <button id="btn-start-timer" class="btn btn-sm btn-outline">Start Timer</button>
+              </div>
+            </div>
+
+            <div class="ap-description" id="protocol-summary">
+              High-flux Solar Particle Event detected via coronal mass ejection (CME) shock front. Massive solar proton flux (&gt;100 MeV) will penetrate non-shielded hull within 15-20 minutes. Execute immediate sanctuary retreat.
+            </div>
+
+            <!-- Interactive Step-by-Step Checklist -->
+            <div class="ap-checklist-wrapper">
+              <h4 class="checklist-title">STEP-BY-STEP CLINICAL & OPERATIONAL ACTIONS:</h4>
+              <div class="ap-steps-list" id="protocol-steps-list">
+                <!-- Injected via JavaScript -->
+              </div>
+            </div>
+
+            <!-- Protocol Progress & Action Controls -->
+            <div class="ap-actions-footer">
+              <div class="ap-progress-bar">
+                <div class="ap-progress-fill" id="protocol-progress-bar" style="width: 0%;"></div>
+              </div>
+              <div class="ap-footer-buttons">
+                <button id="btn-complete-protocol" class="btn btn-primary" disabled>Complete & Log Protocol</button>
+                <button id="btn-generate-sbar-guidance" class="btn btn-secondary">Transmit Downlink SBAR to CapCom</button>
+                <button id="btn-reset-protocol" class="btn btn-outline">Reset Checklist</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Telemetry Event Stream & Downlink SBAR Generator -->
+        <div class="card card-alerts-and-sbar">
+          <div class="card-header">
+            <h3 class="card-title">Mission Control Clinical Downlink (SBAR)</h3>
+            <span class="badge-accent">CAPCOM & FLIGHT SURGEON UPLINK</span>
+          </div>
+
+          <div class="sbar-box">
+            <div class="sbar-header-info">
+              <span>FORMAT: <strong>SBAR</strong> (Situation, Background, Assessment, Recommendation)</span>
+              <button id="btn-copy-sbar-guidance" class="btn btn-sm btn-outline">Copy Downlink Report</button>
+            </div>
+
+            <textarea id="sbar-text-guidance" class="sbar-textarea font-mono" rows="12" readonly>
+[ASTRIS-BIO CLINICAL DOWNLINK TRANSMISSION]
+MET: 042d 18h 44m 12s | DSN MADRID
+PATIENT: CDR Srikanth (ID: ASTRO-01)
+DISTANCE: 56,420,800 km (0.377 AU) | 1-WAY LAG: 03m 08s
+
+SITUATION:
+Telemetry within nominal baseline limits across all bio-sensors.
+
+BACKGROUND:
+Long-duration Mars Transit mission day 42. Past medical history negative for space motion sickness. Daily ARED compliance 86.7%.
+
+ASSESSMENT:
+Cardiovascular tone stable. ONSD 5.1 mm indicates normal SANS status. Psychomotor vigilance optimal. Radiation exposure: 34.8 mSv cumulative (14% PEL). Re-entry bone crushing fracture risk minimal under 1G.
+
+RECOMMENDATION:
+Continue nominal 150 min ARED workout, maintain 2.5L oral hydration, proceed with scheduled evening 480nm circadian light dimming.
+            </textarea>
+          </div>
+
+          <!-- Real-Time Emergency Event & Telemetry Log -->
+          <div class="alerts-log-section">
+            <div class="als-header">
+              <span>REAL-TIME AUDIT & EVENT LOG</span>
+              <button id="btn-clear-logs-guidance" class="btn-clear font-mono">Clear Log</button>
+            </div>
+            <div class="event-log-container" id="event-log-list-guidance">
+              <div class="log-entry log-nominal">
+                <span class="log-time font-mono">[18:42:10]</span>
+                <span class="log-badge-tag tag-nom">NOMINAL</span>
+                <span class="log-msg">Continuous ECG & PPG waveform calibrated at 1000 Hz. Lead impedance optimal.</span>
+              </div>
+              <div class="log-entry log-nominal">
+                <span class="log-time font-mono">[18:30:00]</span>
+                <span class="log-badge-tag tag-nom">ROUTINE</span>
+                <span class="log-msg">Pilot Sersan completed 120-min Lower Body Negative Pressure (LBNP) session at 20 mmHg.</span>
+              </div>
+              <div class="log-entry log-nominal">
+                <span class="log-time font-mono">[18:00:15]</span>
+                <span class="log-badge-tag tag-nom">DOSIMETRY</span>
+                <span class="log-msg">Heliospheric monitor reports deep space background flux at 0.038 mSv/h.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- TAB 7: NASA SPACE APPS 2026 & HRP INNOVATION HUB         -->
+    <!-- ======================================================== -->
+    <section id="tab-resources" class="tab-pane">
+      <div class="resources-layout">
+        <div class="resources-sidebar">
+          <div class="rs-title">NASA 2026 INNOVATION & HRP EVIDENCE</div>
+          <ul class="rs-nav" id="resource-nav-list">
+            <li class="rs-nav-item active" data-res="res-spaceapps" onclick="selectResourceTab('res-spaceapps')">NASA Space Apps Challenge 2026 Brief</li>
+            <li class="rs-nav-item" data-res="res-abort" onclick="selectResourceTab('res-abort')">Immediate Emergency Landing & Abort Trajectories</li>
+            <li class="rs-nav-item" data-res="res-bone-crush" onclick="selectResourceTab('res-bone-crush')">Bone Crushing & Re-entry G-Forces (BMD Loss)</li>
+            <li class="rs-nav-item" data-res="res-isolation" onclick="selectResourceTab('res-isolation')">Deep Space Confinement & Earth-Out-Of-View</li>
+            <li class="rs-nav-item" data-res="res-tissue-rad" onclick="selectResourceTab('res-tissue-rad')">Radiation Penetration into Human Organs (HZE/Bragg)</li>
+            <li class="rs-nav-item" data-res="res-sans" onclick="selectResourceTab('res-sans')">Spaceflight Neuro-ocular Syndrome (SANS)</li>
+            <li class="rs-nav-item" data-res="res-pharma" onclick="selectResourceTab('res-pharma')">Microgravity Pharmacokinetics & Drug Degradation</li>
+          </ul>
+        </div>
+
+        <div class="resources-main card">
+          <div id="resource-content-area">
+            <!-- Dynamically populated via JS -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- PERSISTENT HUD FOOTER -->
+  <footer class="hud-footer">
+    <div class="footer-segment">
+      <span class="fs-label">CABIN PRESSURE:</span>
+      <span class="fs-val font-mono highlight-green" id="foot-pressure">101.3 kPa (14.7 psi)</span>
+    </div>
+    <div class="footer-divider"></div>
+    <div class="footer-segment">
+      <span class="fs-label">CABIN pO2:</span>
+      <span class="fs-val font-mono highlight-green" id="foot-po2">21.3 kPa (21.0%)</span>
+    </div>
+    <div class="footer-divider"></div>
+    <div class="footer-segment">
+      <span class="fs-label">CABIN pCO2:</span>
+      <span class="fs-val font-mono highlight-green" id="foot-pco2">0.32 kPa (2.4 mmHg)</span>
+    </div>
+    <div class="footer-divider"></div>
+    <div class="footer-segment">
+      <span class="fs-label">DISTANCE FROM EARTH:</span>
+      <span class="fs-val font-mono highlight-cyan" id="foot-earth-dist">56,420,800 km</span>
+    </div>
+    <div class="footer-divider"></div>
+    <div class="footer-segment">
+      <span class="fs-label">HULL INTEGRITY:</span>
+      <span class="fs-val font-mono highlight-cyan">100% (SEALED)</span>
+    </div>
+    <div class="footer-divider"></div>
+    <div class="footer-segment telemetry-heartbeat">
+      <span class="heart-pulse-icon"></span>
+      <span class="fs-label">SYSTEM CLOCK:</span>
+      <span class="fs-val font-mono" id="foot-utc">2026-11-14 15:30:00 UTC</span>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+  <script src="orbital.js"></script>
+</body>
+</html>
